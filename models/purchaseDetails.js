@@ -1,22 +1,21 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const {Model} = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  class purchase_details extends Model {
+  class PurchaseDetail extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      purchase_details.belongsTo(models.Purchase, {
+      PurchaseDetail.belongsTo(models.Purchase, {
         foreignKey: 'purchase_id',
         as: 'purchase'
       })
     }
   }
-  purchase_details.init({
+  PurchaseDetail.init({
     purchase_detail_id: {
       type:DataTypes.STRING,
       allowNull: false,
@@ -25,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     purchase_id: {
       type: DataTypes.STRING,
       references: {
-        model: 'Purchases', // el nombre de la tabla a la que se relaciona (¡en plural!)
+        model: 'purchases', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'purchase_id',
       },
       onUpdate: 'CASCADE',
@@ -35,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     product_id: {
       type: DataTypes.STRING,
       references: {
-        model: 'Products', // el nombre de la tabla a la que se relaciona (¡en plural!)
+        model: 'products', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'product_id',
       },
       onUpdate: 'CASCADE',
@@ -46,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     value_quantity: DataTypes.FLOAT
   }, {
     sequelize,
-    modelName: 'purchase_details',
+    modelName: 'PurchaseDetail',
+    tableName: 'purchase_details'
   });
-  return purchase_details;
+  return PurchaseDetail;
 };
