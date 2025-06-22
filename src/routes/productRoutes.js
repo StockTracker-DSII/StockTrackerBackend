@@ -8,5 +8,6 @@ router.get('/', productController.getAllProducts);
 // POST /products
 router.post('/create', productController.createProduct);
 router.post('/destroy', productController.deleteProduct);
+router.post('/available', productController.ActiveDeactivate);
 
 module.exports = router;

@@ -20,3 +20,27 @@ describe('POST /products/create ', () => {
     expect(response.body.product_id).toMatch(/^PRD\d{5}$/); // Formato PRD00001
   });
 });
+
+/*
+describe('GET /products', () => {
+  it('debería devolver la lista de todos los productos', async () => {
+    // TODO: Implementar test para obtener productos
+  });
+});
+*/
+
+/*
+describe('POST /products/destroy', () => {
+  it('debería eliminar un producto por su ID', async () => {
+    // TODO: Implementar test para borrado
+  });
+});
+*/
+
+/*
+describe('POST /products/available', () => {
+  it('debería activa o desactivar un producto por su ID', async () => {
+    // TODO: Implementar test para cambiar disponibilidad
+  });
+});
+*/
