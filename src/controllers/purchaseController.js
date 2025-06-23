@@ -1,5 +1,27 @@
 const { Purchase, Purchase_detail, Product } = require('../../models');
+/*
+exports.newPurchase = async (req, res) => {
+  try {
+    
+    const {productList} = req.body;
 
+    productList.forEach(element => {
+      
+    });
+
+    const lastPurchase = await Purchase.findOne({
+      order: [['purchase_id', 'DESC']]
+    });
+
+    const lastPurchaseID = lastPurchase?.purchase_id || 
+
+    //const purchase = await P
+
+  } catch (error) {
+    
+  }
+}
+*/
 /*
 exports.bulkPurchase = async (req, res) => {
   const { items } = req.body;
