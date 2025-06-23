@@ -21,6 +21,46 @@ describe('POST /products/create ', () => {
   });
 });
 
+describe('POST /products/available', () => {
+  let productoCreado;
+
+  beforeAll(async () => {
+    const res = await request(app)
+      .post('/products/create')
+      .send({
+        name: 'Producto Test Act/Desact',
+        description: 'Producto para test de activación y desactivación',
+        sale_price: 10000,
+        bought_price: 5000,
+        category_id: "CAT001"
+      });
+
+    productoCreado = res.body;
+  });
+
+  test('Debe activar un producto inactivo', async () => {
+    const res = await request(app)
+      .post('/products/available')
+      .send({ product_id: productoCreado.product_id });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch(/activado/i);
+    expect(res.body.producto.isActive).toBe(true);
+  });
+  
+  test('Debe desactivar un producto activo', async () => {
+    const res = await request(app)
+      .post('/products/available')
+      .send({ product_id: productoCreado.product_id });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch(/desactivado/i);
+    expect(res.body.producto.isActive).toBe(false);
+  });
+  
+});
+
+
 /*
 describe('GET /products', () => {
   it('debería devolver la lista de todos los productos', async () => {
@@ -37,10 +77,3 @@ describe('POST /products/destroy', () => {
 });
 */
 
-/*
-describe('POST /products/available', () => {
-  it('debería activa o desactivar un producto por su ID', async () => {
-    // TODO: Implementar test para cambiar disponibilidad
-  });
-});
-*/

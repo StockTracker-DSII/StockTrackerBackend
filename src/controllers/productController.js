@@ -95,7 +95,7 @@ exports.ActiveDeactivate = async (req, res) => {
 
     const producto = await Product.findByPk(product_id);
 
-    if (!product) {
+    if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
     
