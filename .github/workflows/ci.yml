@@ -27,11 +27,23 @@ jobs:
           echo "DB_HOST=db" >> .env
           echo "DB_PORT=5432" >> .env
 
-      - name: Construir y levantar Docker Compose
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Construir y levantar contenedores
         run: docker compose up -d --build
 
-      - name: Esperar a que el backend esté listo
-        run: sleep 10
+      - name: Verificar estado de los contenedores
+        run: docker compose ps
+
+      - name: Esperar a que los servicios estén listos
+        run: sleep 20
+
+      - name: Ver logs del backend si falla
+        if: failure()
+        run: docker compose logs backend
 
       - name: Ejecutar tests en el contenedor backend
         run: docker compose exec backend npm test
