@@ -1,40 +1,83 @@
-const { Purchase, Purchase_detail, Product } = require('../../models');
+const { Purchase, PurchaseDetail, Product } = require('../../models');
 
-/*
-exports.bulkPurchase = async (req, res) => {
-  const { items } = req.body;
-  // items: [{ product_id: '123', quantity: 10 }, ...]
-
-  const t = await Purchase.sequelize.transaction();
+exports.newPurchase = async (req, res) => {
   try {
-    // Crear registro de compra
-    const purchase = await Purchase.create({ date: new Date() }, { transaction: t });
+    const { productos } = req.body;
 
-    for (const item of items) {
-      const { product_id, quantity } = item;
-
-      // Verificar si el producto existe
-      const product = await Product.findByPk(product_id, { transaction: t });
-      if (!product) throw new Error(`Producto no encontrado: ${product_id}`);
-
-      // Aumentar stock
-      product.stock += quantity;
-      await product.save({ transaction: t });
-
-      // Crear detalle de compra
-      await Purchase_detail.create({
-        purchase_id: purchase.purchase_id,
-        product_id,
-        quantity
-      }, { transaction: t });
+    // Validación básica
+    if (!productos || !Array.isArray(productos) || productos.length === 0) {
+      return res.status(400).json({ error: 'Lista de productos inválida o vacía.' });
     }
 
-    await t.commit();
-    res.status(201).json({ message: 'Compra realizada con éxito', purchase_id: purchase.purchase_id });
+    // Generar fecha y ID único
+    const fechaActual = new Date();
+    const fechaISO = fechaActual.toISOString().slice(0, 10); // YYYY-MM-DD
+
+    const lastPurchase = await Purchase.findOne({
+      order: [['purchase_id', 'DESC']]
+    });
+
+    const lastID = lastPurchase?.purchase_id || `${fechaISO}_000000000000`;
+    const lastNumber = parseInt(lastID.slice(11));
+    const newNumber = lastNumber + 1;
+    const newPurchaseID = `${fechaISO}_${newNumber.toString().padStart(12, '0')}`;
+
+    // Crear la compra inicial con total en 0
+    const nuevaCompra = await Purchase.create({
+      purchase_id: newPurchaseID,
+      date: fechaActual,
+      total_value: 0.0
+    });
+
+    let total = 0.0;
+
+    for (const item of productos) {
+      const { product_id, quantity } = item;
+
+      // Verificar que el producto exista
+      const producto = await Product.findByPk(product_id);
+      if (!producto) {
+        return res.status(404).json({ error: `Producto con ID ${product_id} no encontrado.` });
+      }
+
+      const valorUnitario = producto.bought_price;
+      const valorTotal = valorUnitario * quantity;
+
+      // Generar ID para purchase_detail
+      const lastDetail = await PurchaseDetail.findOne({
+        order: [['purchase_detail_id', 'DESC']]
+      });
+
+      const lastDetailID = lastDetail?.purchase_detail_id || '000000000000';
+      const detailNumber = parseInt(lastDetailID) + 1;
+      const newDetailID = detailNumber.toString().padStart(12, '0');
+
+      // Crear el detalle
+      await PurchaseDetail.create({
+        purchase_detail_id: newDetailID,
+        purchase_id: newPurchaseID,
+        product_id,
+        quantity,
+        value_individual: valorUnitario,
+        value_quantity: valorTotal
+      });
+
+      // Sumar al total de la compra
+      total += valorTotal;
+    }
+
+    // Actualizar el valor total en la compra
+    nuevaCompra.total_value = total;
+    await nuevaCompra.save();
+
+    return res.status(201).json({
+      message: 'Compra registrada con éxito.',
+      purchase_id: nuevaCompra.purchase_id,
+      total_value: nuevaCompra.total_value
+    });
+
   } catch (error) {
-    await t.rollback();
-    console.error(error);
-    res.status(500).json({ error: 'Error al realizar la compra' });
+    console.error('Error al registrar la compra:', error);
+    return res.status(500).json({ error: 'Error al registrar la compra.' });
   }
 };
-*/
