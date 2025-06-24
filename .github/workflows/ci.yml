@@ -35,7 +35,7 @@ jobs:
           node-version: '18'
 
       - name: Construir y levantar Docker
-        run: docker compose up -d --build
+        run: docker compose up --build -d
 
       - name: Esperar a que el backend esté listo
         run: sleep 10
