@@ -10,21 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      db:
-        image: postgres:16
-        ports:
-          - 5433:5432
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: stock_db
-        options: >-
-          --health-cmd "pg_isready -U user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Clonar el repositorio
         uses: actions/checkout@v3
@@ -34,13 +19,21 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Construir y levantar Docker
-        run: docker compose up --build -d
+      - name: Crear archivo .env para Docker
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+
+      - name: Construir y levantar Docker Compose
+        run: docker compose up -d --build
 
       - name: Esperar a que el backend esté listo
         run: sleep 10
 
-      - name: Correr tests dentro del contenedor
+      - name: Ejecutar tests en el contenedor backend
         run: docker compose exec backend npm test
 
       - name: Apagar contenedores
