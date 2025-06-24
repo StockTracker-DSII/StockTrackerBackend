@@ -21,13 +21,49 @@ describe('POST /products/create ', () => {
   });
 });
 
-/*
 describe('GET /products', () => {
-  it('debería devolver la lista de todos los productos', async () => {
-    // TODO: Implementar test para obtener productos
+  // Podríamos agregar un beforeAll para crear datos de prueba si es necesario
+
+  it('debería devolver todos los productos con sus categorías', async () => {
+    const response = await request(app).get('/products');
+    
+    expect(response.statusCode).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    
+    // Verificar que cada producto tenga la estructura esperada
+    response.body.forEach(product => {
+      expect(product).toHaveProperty('product_id');
+      expect(product).toHaveProperty('name');
+      expect(product).toHaveProperty('category_id');
+      expect(product).toHaveProperty('category'); // Por el include
+      expect(typeof product.category).toBe('object');
+    });
+  });
+
+  it('debería filtrar productos por category_id cuando se especifica', async () => {
+    // 1. Primero obtenemos alguna category_id existente
+    const allProducts = await request(app).get('/products');
+    const testCategoryId = allProducts.body[0]?.category_id;
+    
+    if (testCategoryId) {
+      // 2. Hacemos la petición filtrada
+      const filteredResponse = await request(app)
+        .get('/products')
+        .query({ category_id: testCategoryId });
+      
+      expect(filteredResponse.statusCode).toBe(200);
+      
+      // 3. Verificamos que todos los productos sean de esa categoría
+      filteredResponse.body.forEach(product => {
+        expect(product.category_id).toBe(testCategoryId);
+      });
+      
+      // 4. Verificamos que la cantidad sea menor o igual que sin filtro
+      expect(filteredResponse.body.length).toBeLessThanOrEqual(allProducts.body.length);
+    }
   });
 });
-*/
+
 
 /*
 describe('POST /products/destroy', () => {
