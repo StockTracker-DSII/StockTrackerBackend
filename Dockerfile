@@ -1,9 +1,6 @@
 # Imagen base oficial de Node
 FROM node:18
 
-# Establece el entorno en desarrollo (para que npm instale devDependencies)
-ENV NODE_ENV=development
-
 # Crear directorio de trabajo
 WORKDIR /usr/src/app
 
@@ -11,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Instalar dependencias
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copiar el resto de los archivos
 COPY . .
