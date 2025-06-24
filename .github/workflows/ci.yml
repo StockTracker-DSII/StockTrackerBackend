@@ -30,6 +30,17 @@ jobs:
       - name: Construir y levantar Docker Compose
         run: docker compose up -d --build
 
+      - name: Esperar a que el backend responda
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:3000/ > /dev/null; then
+              echo "Backend está listo"
+              break
+            fi
+            echo "Esperando al backend..."
+            sleep 2
+          done
+
       - name: Esperar a que el backend esté listo
         run: sleep 10
 
