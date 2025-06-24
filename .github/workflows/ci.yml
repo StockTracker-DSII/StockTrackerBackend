@@ -46,7 +46,7 @@ jobs:
         run: docker compose logs backend
 
       - name: Ejecutar tests en el contenedor backend
-        run: docker compose exec backend npm test
+        run: docker compose run --rm backend npm test
 
       - name: Apagar contenedores
         if: always()
