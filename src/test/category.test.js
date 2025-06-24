@@ -20,7 +20,7 @@ afterAll(async () => {
 describe('Test de la API crear Categoría', () => {
   it('Debe crear una nueva categoría correctamente', async () => {
     const res = await request(app)
-      .post('/categories/create')
+      .post('/categories')
       .send({ name: 'Tecnología' });
 
     expect(res.statusCode).toBe(201);
@@ -30,7 +30,7 @@ describe('Test de la API crear Categoría', () => {
 
   it('Debe rechazar la creación de una categoría duplicada', async () => {
     const res = await request(app)
-      .post('/categories/create')
+      .post('/categories')
       .send({ name: 'Tecnología' });
 
     expect(res.statusCode).toBe(409);
@@ -39,7 +39,7 @@ describe('Test de la API crear Categoría', () => {
 
   it('Debe retornar error 500 si no se envía el nombre', async () => {
     const res = await request(app)
-      .post('/categories/create')
+      .post('/categories')
       .send({});
 
     expect(res.statusCode).toBe(500);
@@ -47,6 +47,19 @@ describe('Test de la API crear Categoría', () => {
   });
 });
 
+describe('GET /categories', () => {
+  it('debería devolver un array con las categorías existentes', async () => {
+    const response = await request(app).get('/categories');
+
+    expect(response.statusCode).toBe(200);                     
+    expect(Array.isArray(response.body)).toBe(true);       
+    expect(response.body.length).toBeGreaterThan(0);          
+
+ 
+    expect(response.body[0]).toHaveProperty('name');
+    expect(response.body[0]).toHaveProperty('category_id');
+  });
+});
 
 
 describe('DELETE /categories/:id', () => {
