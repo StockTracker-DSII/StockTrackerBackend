@@ -30,9 +30,6 @@ jobs:
       - name: Construir y levantar Docker Compose
         run: docker compose up -d --build
 
-      - name: Instalar dependencias dentro del contenedor backend
-        run: docker compose exec backend npm install
-
       - name: Esperar a que el backend esté listo
         run: sleep 10
 
