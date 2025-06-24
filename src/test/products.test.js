@@ -69,11 +69,40 @@ describe('GET /products', () => {
 });
 */
 
-/*
+
 describe('POST /products/destroy', () => {
-  it('debería eliminar un producto por su ID', async () => {
-    // TODO: Implementar test para borrado
+  let productoCreado;
+
+  beforeAll(async () => {
+    const res = await request(app)
+      .post('/products/create')
+      .send({
+        name: 'Producto Test Eliminar',
+        description: 'Producto para test de eliminacion',
+        sale_price: 3000,
+        bought_price: 5000,
+        category_id: "CAT001"
+      });
+
+    productoCreado = res.body;
   });
+
+  test('Debe eliminar un producto', async () => {
+    const res = await request(app)
+      .post('/products/destroy')
+      .send({ product_id: productoCreado.product_id });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch(/eliminado/i);
+  });
+
+  test('Verificar la eliminacion del producto', async () => {
+    const res = await request(app)
+      .get(`/products/${productoCreado.product_id}`);
+
+    expect(res.statusCode).toBe(404);
+  });
+
 });
-*/
+
 
