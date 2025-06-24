@@ -6,7 +6,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "sequelize": "sequelize",
-    "test": "jest"
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
