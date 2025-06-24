@@ -22,7 +22,6 @@ describe('POST /products/create ', () => {
 });
 
 describe('GET /products', () => {
-  // Podríamos agregar un beforeAll para crear datos de prueba si es necesario
 
   it('debería devolver todos los productos con sus categorías', async () => {
     const response = await request(app).get('/products');
