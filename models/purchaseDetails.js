@@ -17,12 +17,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   PurchaseDetail.init({
     purchase_detail_id: {
-      type:DataTypes.STRING,
+      type:DataTypes.INTEGER,
+      autoIncrement: true,
       allowNull: false,
       primaryKey: true,
     },
     purchase_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: 'purchases', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'purchase_id',
@@ -32,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     
     product_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: 'products', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'product_id',

@@ -9,19 +9,6 @@ exports.newPurchase = async (req, res) => {
       return res.status(400).json({ error: 'Lista de productos inválida o vacía.' });
     }
 
-    // Generar fecha y ID único
-    const fechaActual = new Date();
-    const fechaISO = fechaActual.toISOString().slice(0, 10); // YYYY-MM-DD
-
-    const lastPurchase = await Purchase.findOne({
-      order: [['purchase_id', 'DESC']]
-    });
-
-    const lastID = lastPurchase?.purchase_id || `${fechaISO}_000000000000`;
-    const lastNumber = parseInt(lastID.slice(11));
-    const newNumber = lastNumber + 1;
-    const newPurchaseID = `${fechaISO}_${newNumber.toString().padStart(12, '0')}`;
-
     // Crear la compra inicial con total en 0
     const nuevaCompra = await Purchase.create({
       purchase_id: newPurchaseID,
@@ -43,18 +30,8 @@ exports.newPurchase = async (req, res) => {
       const valorUnitario = producto.bought_price;
       const valorTotal = valorUnitario * quantity;
 
-      // Generar ID para purchase_detail
-      const lastDetail = await PurchaseDetail.findOne({
-        order: [['purchase_detail_id', 'DESC']]
-      });
-
-      const lastDetailID = lastDetail?.purchase_detail_id || '000000000000';
-      const detailNumber = parseInt(lastDetailID) + 1;
-      const newDetailID = detailNumber.toString().padStart(12, '0');
-
       // Crear el detalle
       await PurchaseDetail.create({
-        purchase_detail_id: newDetailID,
         purchase_id: newPurchaseID,
         product_id,
         quantity,

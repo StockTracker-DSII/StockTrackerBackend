@@ -13,25 +13,8 @@ exports.createCategory = async (req, res) => {
     if (existingCategoryName) {
       return res.status(409).json({ error: 'Ya existe una categoría con ese nombre' });
     }
-
-    // Trae el ID de mayor valor
-    const lastCategory = await Category.findOne({
-      order: [['category_id', 'DESC']]
-    });
-
-    // Calcula el nuevo ID, incluso si no hay categorías aún
-    let newNumber = 1;
-
-    if (lastCategory?.category_id) {
-      const numericPart = lastCategory.category_id.slice(3);
-      newNumber = parseInt(numericPart) + 1;
-    }
-
-    const newId = `CAT${newNumber.toString().padStart(3, '0')}`;
-
     // Crea la nueva categoría
     const newCategory = await Category.create({
-      category_id: newId,
       name
     });
 

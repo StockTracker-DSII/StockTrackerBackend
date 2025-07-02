@@ -20,8 +20,9 @@ module.exports = (sequelize, DataTypes) => {
   Product.init({
     product_id: {
       allowNull: false,
+      autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.STRING
+      type: DataTypes.INTEGER
     },
     name: {
     type: DataTypes.STRING,
@@ -35,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0
     },
     category_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: 'Categories', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'category_id',
