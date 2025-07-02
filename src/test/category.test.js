@@ -8,7 +8,6 @@ beforeAll(async () => {
 
   // Creamos una categoría inicial con ID para evitar el error en slice()
   await Category.create({
-    category_id: 'CAT001',
     name: 'Inicial'
   });
 });
@@ -77,7 +76,7 @@ describe('DELETE /categories/:id', () => {
 
   it('should delete an existing category and return 200', async () => {
     const res = await request(app)
-      .delete(`/categories/${testId}`)
+      .delete(`/categories/`)
       .send({ category_id: testId });
 
     expect([200, 204]).toContain(res.statusCode);
