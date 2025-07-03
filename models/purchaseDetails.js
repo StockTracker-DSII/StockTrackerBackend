@@ -13,7 +13,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'purchase_id',
         as: 'purchase'
       })
+
+      PurchaseDetail.belongsTo(models.Product, {
+        foreignKey: 'product_id',
+        as: 'product'
+      });
     }
+
+    
   }
   PurchaseDetail.init({
     purchase_detail_id: {
@@ -25,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     purchase_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'purchases', // el nombre de la tabla a la que se relaciona (¡en plural!)
+        model: 'Purchases', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'purchase_id',
       },
       onUpdate: 'CASCADE',
@@ -35,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     product_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'products', // el nombre de la tabla a la que se relaciona (¡en plural!)
+        model: 'Products', // el nombre de la tabla a la que se relaciona (¡en plural!)
         key: 'product_id',
       },
       onUpdate: 'CASCADE',

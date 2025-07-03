@@ -1,5 +1,10 @@
 const request = require('supertest');
 const app = require('../app');
+const { sequelize, Category } = require('../../models'); // 👈 Aquí está la solución
+
+afterAll(async () => {
+  await sequelize.close();
+});
 
 describe('POST /products/create ', () => {
   it('debería crear un nuevo producto con ID autogenerado', async () => {

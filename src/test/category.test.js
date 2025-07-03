@@ -2,16 +2,6 @@ const request = require('supertest');
 const app = require('../app');
 const { sequelize, Category } = require('../../models');
 
-beforeAll(async () => {
-  // Solo sincronizamos Category
-  await Category.sync({ force: true });
-
-  // Creamos una categoría inicial con ID para evitar el error en slice()
-  await Category.create({
-    name: 'Inicial'
-  });
-});
-
 afterAll(async () => {
   await sequelize.close();
 });
@@ -63,7 +53,7 @@ describe('GET /categories', () => {
 
 describe('DELETE /categories/:id', () => {
   let testId;
-  beforeEach(async () => {
+  beforeAll(async () => {
     const uniqueName = 'ToDelete_' + Date.now();
 
     const res = await request(app)
