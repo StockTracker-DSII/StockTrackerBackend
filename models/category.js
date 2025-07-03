@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
   // Define el modelo Category
   Category.init({
     category_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       allowNull: false,
       primaryKey: true,
     },
