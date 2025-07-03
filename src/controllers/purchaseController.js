@@ -9,9 +9,10 @@ exports.newPurchase = async (req, res) => {
       return res.status(400).json({ error: 'Lista de productos inválida o vacía.' });
     }
 
+    const fechaActual = new Date();
+
     // Crear la compra inicial con total en 0
     const nuevaCompra = await Purchase.create({
-      purchase_id: newPurchaseID,
       date: fechaActual,
       total_value: 0.0
     });
@@ -29,6 +30,7 @@ exports.newPurchase = async (req, res) => {
 
       const valorUnitario = producto.bought_price;
       const valorTotal = valorUnitario * quantity;
+      const newPurchaseID = nuevaCompra.purchase_id
 
       // Crear el detalle
       await PurchaseDetail.create({

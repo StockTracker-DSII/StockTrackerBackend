@@ -14,6 +14,9 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      total_value: {
+        type: Sequelize.FLOAT
+      },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
     });
