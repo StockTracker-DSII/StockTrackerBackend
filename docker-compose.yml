@@ -1,22 +1,38 @@
 services:
   db:
     image: postgres:16
+    container_name: db_dev
     env_file: .env
     ports:
       - '5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+  
+  db_test:
+    image: postgres:16
+    container_name: db_test
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testpass
+      - POSTGRES_DB=stocktracker_test
+    ports:
+      - '5434:5432'
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
 
   backend:
     build: .
+    container_name: backend
     ports:
       - '3000:3000'
     depends_on:
       - db
+      - db_test
     env_file: .env
     volumes:
       - .:/usr/src/app
-    command: npm run dev  # o npm start según tu script
+    command: sh -c "npx sequelize-cli db:migrate --env development && npx sequelize-cli db:migrate --env test && npm run dev"
 
 volumes:
   pgdata:
+  pgdata_test:

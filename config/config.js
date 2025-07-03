@@ -10,10 +10,11 @@ module.exports = {
     port: process.env.DB_PORT
   },
   test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    username: 'postgres',
+    password: 'testpass',
+    database: 'stocktracker_test',
+    host: 'db_test', // este nombre debe coincidir con el del servicio en docker-compose
+    port: 5432,
     dialect: 'postgres'
   },
 };
