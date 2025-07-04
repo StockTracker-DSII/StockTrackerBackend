@@ -1,0 +1,53 @@
+# .github/workflows/ci.yml
+name: CI - Test & SonarCloud
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-and-sonarcloud:
+    runs-on: ubuntu-latest
+
+    services:
+      db_test:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: stocktracker_test
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Run tests with Docker
+        run: docker compose run --rm test-runner
+      
+      - name: Subir resultados a SonarCloud
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=StockTracker-DSII_StockTrackerBackend
+            -Dsonar.organization=stocktracker-dsii
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+
+

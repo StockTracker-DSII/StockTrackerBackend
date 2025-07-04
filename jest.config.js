@@ -1,5 +1,8 @@
 // jest.config.js
 module.exports = {
-  globalSetup: './jest.setup.js', // 🟢 Ruta al setup
-  testEnvironment: 'node',
+  testEnvironment: "node",
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  coverageReporters: ["lcov", "text", "text-summary"],
+  testMatch: ["**/*.test.js"],
 };
