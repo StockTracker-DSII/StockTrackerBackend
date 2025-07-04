@@ -38,9 +38,6 @@ jobs:
 
       - name: Run tests with Docker
         run: docker compose run --rm test-runner
-
-
-      
       
       - name: Subir resultados a SonarCloud
         uses: SonarSource/sonarcloud-github-action@v2
@@ -48,6 +45,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=StockTracker-DSII_StockTrackerBackend
-            -Dsonar.organization=StockTrackerBackend
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            sonar.projectKey=stocktracker-dsii_StockTrackerBackend
+            sonar.organization=stocktracker-dsii
+            sonar.javascript.lcov.reportPaths=coverage/lcov.info
+
