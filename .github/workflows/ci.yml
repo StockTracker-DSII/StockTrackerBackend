@@ -36,9 +36,6 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      - name: Migrar la base de datos
-        run: npx sequelize-cli db:migrate --env test
-
       - name: Run tests with Docker
         run: docker compose run --rm test-runner
 
