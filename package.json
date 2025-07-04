@@ -20,5 +20,16 @@
     "nodemon": "^3.1.10",
     "sequelize-cli": "^6.6.3",
     "supertest": "^7.1.1"
-  }
+  },
+  "jest": {
+  "coverageThreshold": {
+    "global": {
+      "branches": 60,
+      "functions": 60,
+      "lines": 60,
+      "statements": 60
+      }
+    }
+  } 
+
 }
