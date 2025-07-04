@@ -45,7 +45,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            sonar.projectKey=stocktracker-dsii_StockTrackerBackend
-            sonar.organization=stocktracker-dsii
-            sonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.projectKey=stocktracker-dsii_StockTrackerBackend
+            -Dsonar.organization=stocktracker-dsii
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
 
