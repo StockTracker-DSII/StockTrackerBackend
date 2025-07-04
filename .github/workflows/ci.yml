@@ -39,9 +39,12 @@ jobs:
       - name: Migrar la base de datos
         run: npx sequelize-cli db:migrate --env test
 
-      - name: Ejecutar pruebas con cobertura
-        run: npm test -- --coverage
+      - name: Run tests with Docker
+        run: docker compose run --rm test-runner
 
+
+      
+      
       - name: Subir resultados a SonarCloud
         uses: SonarSource/sonarcloud-github-action@v2
         env:

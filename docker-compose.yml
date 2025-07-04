@@ -33,6 +33,18 @@ services:
       - .:/usr/src/app
     command: sh -c "npx sequelize-cli db:migrate --env development && npx sequelize-cli db:migrate --env test && npm run dev"
 
+  test-runner:
+    build: .
+    container_name: test-runner
+    depends_on:
+      - db_test
+    environment:
+      NODE_ENV: test
+      DB_HOST: db_test
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "npx sequelize-cli db:migrate --env test && npm test -- --coverage"
+
 volumes:
   pgdata:
   pgdata_test:
