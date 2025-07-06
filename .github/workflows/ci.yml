@@ -3,7 +3,8 @@ name: CI - Test, SonarCloud & Docker Image
 on:
   pull_request:
     branches: [main, develop]
-    types: [closed]
+  push:
+    branches: [main]
 
 jobs:
   test-and-sonarcloud:
@@ -51,7 +52,7 @@ jobs:
 
   build-and-push-image:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && github.base_ref == 'main'
+    if: github.ref == 'refs/heads/main'
 
     permissions:
       packages: write
