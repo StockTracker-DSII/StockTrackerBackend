@@ -1,40 +1,62 @@
-const { Purchase, Purchase_detail, Product } = require('../../models');
+const { Purchase, PurchaseDetail, Product } = require('../../models');
 
-/*
-exports.bulkPurchase = async (req, res) => {
-  const { items } = req.body;
-  // items: [{ product_id: '123', quantity: 10 }, ...]
-
-  const t = await Purchase.sequelize.transaction();
+exports.newPurchase = async (req, res) => {
   try {
-    // Crear registro de compra
-    const purchase = await Purchase.create({ date: new Date() }, { transaction: t });
+    const { productos } = req.body;
 
-    for (const item of items) {
-      const { product_id, quantity } = item;
-
-      // Verificar si el producto existe
-      const product = await Product.findByPk(product_id, { transaction: t });
-      if (!product) throw new Error(`Producto no encontrado: ${product_id}`);
-
-      // Aumentar stock
-      product.stock += quantity;
-      await product.save({ transaction: t });
-
-      // Crear detalle de compra
-      await Purchase_detail.create({
-        purchase_id: purchase.purchase_id,
-        product_id,
-        quantity
-      }, { transaction: t });
+    // Validación básica
+    if (!productos || !Array.isArray(productos) || productos.length === 0) {
+      return res.status(400).json({ error: 'Lista de productos inválida o vacía.' });
     }
 
-    await t.commit();
-    res.status(201).json({ message: 'Compra realizada con éxito', purchase_id: purchase.purchase_id });
+    const fechaActual = new Date();
+
+    // Crear la compra inicial con total en 0
+    const nuevaCompra = await Purchase.create({
+      date: fechaActual,
+      total_value: 0.0
+    });
+
+    let total = 0.0;
+
+    for (const item of productos) {
+      const { product_id, quantity } = item;
+
+      // Verificar que el producto exista
+      const producto = await Product.findByPk(product_id);
+      if (!producto) {
+        return res.status(404).json({ error: `Producto con ID ${product_id} no encontrado.` });
+      }
+
+      const valorUnitario = producto.bought_price;
+      const valorTotal = valorUnitario * quantity;
+      const newPurchaseID = nuevaCompra.purchase_id
+
+      // Crear el detalle
+      await PurchaseDetail.create({
+        purchase_id: newPurchaseID,
+        product_id,
+        quantity,
+        value_individual: valorUnitario,
+        value_quantity: valorTotal
+      });
+
+      // Sumar al total de la compra
+      total += valorTotal;
+    }
+
+    // Actualizar el valor total en la compra
+    nuevaCompra.total_value = total;
+    await nuevaCompra.save();
+
+    return res.status(201).json({
+      message: 'Compra registrada con éxito.',
+      purchase_id: nuevaCompra.purchase_id,
+      total_value: nuevaCompra.total_value
+    });
+
   } catch (error) {
-    await t.rollback();
-    console.error(error);
-    res.status(500).json({ error: 'Error al realizar la compra' });
+    console.error('Error al registrar la compra:', error);
+    return res.status(500).json({ error: 'Error al registrar la compra.' });
   }
 };
-*/

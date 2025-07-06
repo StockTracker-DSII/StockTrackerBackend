@@ -24,22 +24,7 @@ exports.createProduct = async (req, res) => {
   try {
     const { name, description, sale_price, bought_price, category_id } = req.body;
 
-      // Traemos el Id de mayor valor
-    const lastProduct = await Product.findOne({
-      order: [['product_id', 'DESC']]
-    });
-
-      // Obtenemos el Id de la categoria
-    const lastId = lastProduct?.product_id ||'PRD00000';
-      // Separa la parte numerica del ID
-    const numericPart = lastId.slice(3); 
-      // Ahora puedes convertir a número y sumar:
-    const newNumber = parseInt(numericPart) + 1;
-      // Formatear con ceros a la izquierda:
-    const newId = `PRD${newNumber.toString().padStart(5, '0')}`;
-
     const product = await Product.create({
-      product_id: newId,
       name,
       description,
       sale_price,
@@ -95,7 +80,7 @@ exports.ActiveDeactivate = async (req, res) => {
 
     const producto = await Product.findByPk(product_id);
 
-    if (!product) {
+    if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
     

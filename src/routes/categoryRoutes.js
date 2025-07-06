@@ -3,9 +3,8 @@ const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 
 // POST /categories → crear categoría
-router.post('/create', categoryController.createCategory);
-router.post('/destroy', categoryController.deleteCategories);
-// GET /categories → obtener todas las categorías
-router.get('/', categoryController.getAllCategories);
+router.post('/', categoryController.createCategory); // POST /categories
+router.delete('/', categoryController.deleteCategories); // DELETE /categories/:id
+router.get('/', categoryController.getAllCategories); // GET /categories
 
 module.exports = router;
