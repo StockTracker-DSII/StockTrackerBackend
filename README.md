@@ -16,7 +16,7 @@ Apagado: docker compose down
 
 ## Ingresar a un contenedor:
 1. docker ps //Lista de contenedores
-2. docker exec -it <Nombre contenedor> bash //Ingresar al contenedor
+2. docker exec -it <Nombre contenedor> bash
 -- Para ver la BD --
 3. psql -U <usuario> -d <nombre bd>
 4. \dt ver tablas
