@@ -1,42 +1,63 @@
-const { Sale, Sale_detail, Product } = require('../../models');
-/*
-exports.bulkSale = async (req, res) => {
-  const { items } = req.body;
-  // items: [{ product_id: '123', quantity: 5 }, ...]
+const { Sale, SaleDetail, Product } = require('../../models');
 
-  const t = await Sale.sequelize.transaction();
+exports.newSale = async (req, res) => {
   try {
-    // Crear registro de venta
-    const sale = await Sale.create({}, { transaction: t });
+    const { productos } = req.body;
 
-    for (const item of items) {
-      const { product_id, quantity } = item;
-
-      // Verificar si el producto existe
-      const product = await Product.findByPk(product_id, { transaction: t });
-      if (!product) throw new Error(`Producto no encontrado: ${product_id}`);
-
-      // Verificar stock suficiente
-      if (product.stock < quantity) throw new Error(`Stock insuficiente para el producto ${product_id}`);
-
-      // Disminuir stock
-      product.stock -= quantity;
-      await product.save({ transaction: t });
-
-      // Crear detalle de venta
-      await Sale_detail.create({
-        sale_id: sale.sale_id,
-        product_id,
-        quantity
-      }, { transaction: t });
+    if (!productos || !Array.isArray(productos) || productos.length === 0) {
+      return res.status(400).json({ error: 'Lista de productos inválida o vacía.' });
     }
 
-    await t.commit();
-    res.status(201).json({ message: 'Venta realizada con éxito', sale_id: sale.sale_id });
+    const fechaActual = new Date();
+
+    const nuevaVenta = await Sale.create({
+      date: fechaActual,
+      total_value: 0.0
+    });
+
+    let total = 0.0;
+
+    for (const item of productos) {
+      const { product_id, quantity } = item;
+
+      const producto = await Product.findByPk(product_id);
+      if (!producto) {
+        return res.status(404).json({ error: `Producto con ID ${product_id} no encontrado.` });
+      }
+
+      if (producto.stock < quantity) {
+        return res.status(400).json({ error: `Stock insuficiente para el producto con ID ${product_id}.` });
+      }
+
+      const valorUnitario = producto.sale_price;
+      const valorTotal = valorUnitario * quantity;
+      const newSaleID = nuevaVenta.sale_id;
+
+      await SaleDetail.create({
+        sale_id: newSaleID,
+        product_id,
+        quantity,
+        value_individual: valorUnitario,
+        value_quantity: valorTotal
+      });
+
+      producto.stock -= quantity;
+      await producto.save();
+
+      total += valorTotal;
+    }
+
+    nuevaVenta.total_value = total;
+    await nuevaVenta.save();
+
+    return res.status(201).json({
+      message: 'Venta registrada con éxito.',
+      sale_id: nuevaVenta.sale_id,
+      total_value: nuevaVenta.total_value
+    });
+
   } catch (error) {
-    await t.rollback();
-    console.error(error);
-    res.status(500).json({ error: 'Error al realizar la venta' });
+    console.error('Error al registrar la venta:', error);
+    return res.status(500).json({ error: 'Error al registrar la venta.' });
   }
 };
-*/
