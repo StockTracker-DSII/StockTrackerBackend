@@ -7,6 +7,14 @@ afterAll(async () => {
 });
 
 describe('Test de la API crear Categoría', () => {
+  beforeAll(async () => {
+    await Category.destroy({ where: { name: 'Tecnología' } });
+  });
+
+  afterAll(async () => {
+    await Category.destroy({ where: { name: 'Tecnología' } });
+  });
+
   it('Debe crear una nueva categoría correctamente', async () => {
     const res = await request(app)
       .post('/categories')
