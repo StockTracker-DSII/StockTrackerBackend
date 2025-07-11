@@ -1,5 +1,5 @@
 const { sequelize } = require('../../models');
-//para conseguir las 10 ventas MM
+
 exports.getTopSellingProducts = async (req, res) => {
   try {
     const [results] = await sequelize.query(`
