@@ -7,10 +7,10 @@ afterAll(async () => {
 });
 
 describe('Test de la API crear Categoría', () => {
-  beforeAll(async () => {
+  /*beforeAll(async () => {
     await Category.destroy({ where: { name: 'Tecnología' } });
   });
-
+*/
   afterAll(async () => {
     await Category.destroy({ where: { name: 'Tecnología' } });
   });
@@ -45,6 +45,20 @@ describe('Test de la API crear Categoría', () => {
 });
 
 describe('GET /categories', () => {
+  const categoryName = 'Prueba GET';
+
+  beforeAll(async () => {
+    // Borrar por si ya existe
+    await Category.destroy({ where: { name: categoryName } });
+
+    // Crear explícitamente
+    const res = await request(app)
+      .post('/categories')
+      .send({ name: categoryName });
+
+    expect(res.statusCode).toBe(201); // Asegura que se creó correctamente
+  });
+
   it('debería devolver un array con las categorías existentes', async () => {
     const response = await request(app).get('/categories');
 
@@ -52,11 +66,11 @@ describe('GET /categories', () => {
     expect(Array.isArray(response.body)).toBe(true);       
     expect(response.body.length).toBeGreaterThan(0);          
 
- 
     expect(response.body[0]).toHaveProperty('name');
     expect(response.body[0]).toHaveProperty('category_id');
   });
 });
+
 
 
 describe('DELETE /categories/:id', () => {
