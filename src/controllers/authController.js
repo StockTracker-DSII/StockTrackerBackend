@@ -82,3 +82,15 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] } // 👈 excluye contraseñas por seguridad
+    });
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    return res.status(500).json({ message: 'Error al obtener usuarios' });
+  }
+};
