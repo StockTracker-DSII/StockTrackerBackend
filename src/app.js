@@ -5,6 +5,7 @@ const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const saleRoutes = require('./routes/saleRoutes');
+const authRoutes = require('./routes/authRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const cors = require('cors');
 
@@ -18,6 +19,7 @@ app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/purchase',purchaseRoutes);
 app.use('/sale',saleRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/reports', reportRoutes);
 
 app.get('/', (req, res) => {
