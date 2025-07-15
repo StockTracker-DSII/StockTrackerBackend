@@ -7,10 +7,6 @@ afterAll(async () => {
 });
 
 describe('Test de la API crear Categoría', () => {
-  /*beforeAll(async () => {
-    await Category.destroy({ where: { name: 'Tecnología' } });
-  });
-*/
   afterAll(async () => {
     await Category.destroy({ where: { name: 'Tecnología' } });
   });
@@ -34,13 +30,13 @@ describe('Test de la API crear Categoría', () => {
     expect(res.body.error).toBe('Ya existe una categoría con ese nombre');
   });
 
-  it('Debe retornar error 500 si no se envía el nombre', async () => {
+  it('Debe retornar error 400 si no se envía el nombre', async () => {
     const res = await request(app)
       .post('/categories')
       .send({});
 
-    expect(res.statusCode).toBe(500);
-    expect(res.body).toHaveProperty('error', 'Error al crear la categoría');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error', 'El nombre es obligatorio');
   });
 });
 
@@ -48,30 +44,25 @@ describe('GET /categories', () => {
   const categoryName = 'Prueba GET';
 
   beforeAll(async () => {
-    // Borrar por si ya existe
     await Category.destroy({ where: { name: categoryName } });
 
-    // Crear explícitamente
     const res = await request(app)
       .post('/categories')
       .send({ name: categoryName });
 
-    expect(res.statusCode).toBe(201); // Asegura que se creó correctamente
+    expect(res.statusCode).toBe(201);
   });
 
   it('debería devolver un array con las categorías existentes', async () => {
     const response = await request(app).get('/categories');
 
-    expect(response.statusCode).toBe(200);                     
-    expect(Array.isArray(response.body)).toBe(true);       
-    expect(response.body.length).toBeGreaterThan(0);          
-
+    expect(response.statusCode).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
     expect(response.body[0]).toHaveProperty('name');
     expect(response.body[0]).toHaveProperty('category_id');
   });
 });
-
-
 
 describe('DELETE /categories/:id', () => {
   let testId;
@@ -83,7 +74,6 @@ describe('DELETE /categories/:id', () => {
       .send({ name: uniqueName });
 
     testId = res.body.category_id;
-
   });
 
   it('should delete an existing category and return 200', async () => {

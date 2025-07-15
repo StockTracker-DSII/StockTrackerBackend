@@ -1,9 +1,13 @@
-const { where } = require('sequelize');
 const { Category } = require('../../models');
 
 exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
+
+    // Validación temprana
+    if (!name || typeof name !== 'string') {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
+    }
 
     // Verifica si ya existe una categoría con ese nombre
     const existingCategoryName = await Category.findOne({
@@ -13,11 +17,9 @@ exports.createCategory = async (req, res) => {
     if (existingCategoryName) {
       return res.status(409).json({ error: 'Ya existe una categoría con ese nombre' });
     }
-    // Crea la nueva categoría
-    const newCategory = await Category.create({
-      name
-    });
 
+    // Crea la nueva categoría
+    const newCategory = await Category.create({ name });
     res.status(201).json(newCategory);
   } catch (error) {
     console.error('Error al crear la categoría:', error);
