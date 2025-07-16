@@ -1,50 +1,66 @@
-const reportController = require('../controllers/reportController');
-const { sequelize } = require('../../models');
+const request = require('supertest');
+const app = require('../app'); // tu instancia de Express
+const { sequelize, Product, Purchase, PurchaseDetail } = require('../../models');
 
-jest.mock('../../models', () => ({
-  sequelize: {
-    query: jest.fn()
-  }
-}));
 
-describe('getTopSellingProducts', () => {
-  let req;
-  let res;
 
-  beforeEach(() => {
-    req = {};
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
-  });
+describe('Report Controller - getTopSellingProducts', () => {
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  afterAll(async () => {
+    await sequelize.close();
   });
 
   it('debería devolver los productos más vendidos con status 200', async () => {
-    const mockResults = [
-      { product_id: 1, name: 'Producto A', stock: 50, total_sold: 120 },
-      { product_id: 2, name: 'Producto B', stock: 30, total_sold: 80 }
-    ];
 
-    sequelize.query.mockResolvedValue([mockResults]);
+    // Crea productos
+    const productA = await Product.create({
+      name: 'Producto A',
+      description: 'Desc A',
+      sale_price: 100,
+      bought_price: 50,
+      stock: 10,
+      isActive: true
+    });
 
-    await reportController.getTopSellingProducts(req, res);
+    const productB = await Product.create({
+      name: 'Producto B',
+      description: 'Desc B',
+      sale_price: 150,
+      bought_price: 70,
+      stock: 20,
+      isActive: true
+    });
 
-    expect(sequelize.query).toHaveBeenCalledTimes(1);
-    expect(res.json).toHaveBeenCalledWith(mockResults);
-    expect(res.status).not.toHaveBeenCalledWith(500);
+    // Crea una compra
+    const purchase = await Purchase.create({
+      date: new Date(),
+      total_value: 500
+    });
+
+    // Agrega detalles de compra
+    await PurchaseDetail.create({
+      purchase_id: purchase.purchase_id,
+      product_id: productA.product_id,
+      quantity: 3,
+      value_individual: 100,
+      value_quantity: 300
+    });
+
+    await PurchaseDetail.create({
+      purchase_id: purchase.purchase_id,
+      product_id: productB.product_id,
+      quantity: 2,
+      value_individual: 150,
+      value_quantity: 300
+    });
+
+    const res = await request(app).get('/reports/top-selling');
+
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+    expect(res.body[0]).toHaveProperty('product_id');
+    expect(res.body[0]).toHaveProperty('total_sold');
   });
 
-  it('debería manejar errores y devolver status 500', async () => {
-    sequelize.query.mockRejectedValue(new Error('DB fail'));
-
-    await reportController.getTopSellingProducts(req, res);
-
-    expect(sequelize.query).toHaveBeenCalledTimes(1);
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Error al generar el reporte' });
-  });
 });

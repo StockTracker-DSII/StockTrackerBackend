@@ -2,14 +2,12 @@ const request = require('supertest');
 const app = require('../app');
 const { sequelize, Category } = require('../../models');
 
+
 afterAll(async () => {
-  await sequelize.close();
+  await sequelize.close(); // Cerramos la conexión al final de todos los tests
 });
 
-describe('Test de la API crear Categoría', () => {
-  afterAll(async () => {
-    await Category.destroy({ where: { name: 'Tecnología' } });
-  });
+describe('POST /categories', () => {
 
   it('Debe crear una nueva categoría correctamente', async () => {
     const res = await request(app)
@@ -22,6 +20,12 @@ describe('Test de la API crear Categoría', () => {
   });
 
   it('Debe rechazar la creación de una categoría duplicada', async () => {
+
+    const a = await request(app)
+      .post('/categories')
+      .send({ name: 'Tecnología' });
+
+
     const res = await request(app)
       .post('/categories')
       .send({ name: 'Tecnología' });
@@ -41,10 +45,8 @@ describe('Test de la API crear Categoría', () => {
 });
 
 describe('GET /categories', () => {
-
+  
   it('debería devolver un array con las categorías existentes', async () => {
-    
-    await Category.destroy({ where: { name: 'Cat' } });
     await request(app).post('/categories').send({ name: 'Cat' });
 
     const response = await request(app).get('/categories');
@@ -58,26 +60,23 @@ describe('GET /categories', () => {
 });
 
 describe('DELETE /categories/:id', () => {
-  let testId;
-  beforeAll(async () => {
-    const uniqueName = 'ToDelete_' + Date.now();
 
-    const res = await request(app)
-      .post('/categories')
-      .send({ name: uniqueName });
+  
 
-    testId = res.body.category_id;
-  });
+  it('debería eliminar una categoría existente y retornar 200 o 204', async () => {
 
-  it('should delete an existing category and return 200', async () => {
+    const a = await request(app).get('/categories');
+    const categoryId = a.body[0].category_id;
+
+
     const res = await request(app)
       .delete(`/categories/`)
-      .send({ category_id: testId });
+      .send({ category_id: categoryId });
 
     expect([200, 204]).toContain(res.statusCode);
   });
 
-  it('should return 404 when deleting a non-existent category', async () => {
+  it('debería retornar 404 o 400 al eliminar una categoría inexistente', async () => {
     const res = await request(app)
       .delete('/categories/fake-id')
       .send({ category_id: 'fake-id' });
