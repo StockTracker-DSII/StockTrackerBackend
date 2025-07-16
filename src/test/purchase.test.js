@@ -7,11 +7,9 @@ beforeAll(async () => {
   // await sequelize.sync({ force: true });
 
   // Crear categoría y productos reales
-  const category = await Category.create({ name: 'categoria_prueba' });
+  
 
-  await Product.create({ name: 'Mouse', bought_price: 10.0, sale_price: 20.0, category_id: category.category_id });
-  await Product.create({ name: 'Teclado', bought_price: 15.0, sale_price: 30.0, category_id: category.category_id });
-});
+  });
 
 afterAll(async () => {
   // Cierra la conexión a la base de datos si es necesario
@@ -21,6 +19,12 @@ afterAll(async () => {
 describe('POST /purchase/newPurchase', () => {
 
   it('debería registrar una nueva compra exitosamente', async () => {
+
+    const category = await Category.create({ name: 'categoria_prueba' });
+    await Product.create({ name: 'Mouse', bought_price: 10.0, sale_price: 20.0, category_id: category.category_id });
+    await Product.create({ name: 'Teclado', bought_price: 15.0, sale_price: 30.0, category_id: category.category_id });
+
+
     const productos = await Product.findAll();
 
     const payload = {
