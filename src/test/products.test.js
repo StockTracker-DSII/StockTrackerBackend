@@ -6,8 +6,16 @@ afterAll(async () => {
   await sequelize.close();
 });
 
+
 describe('POST /products/create ', () => {
   it('debería crear un nuevo producto con ID autogenerado', async () => {
+
+        await request(app)
+        .post('/categories/create')
+        .send({
+          name: 'Electronica'
+        });
+
     const response = await request(app)
       .post('/products/create')
       .send({
@@ -15,6 +23,7 @@ describe('POST /products/create ', () => {
         description: 'Laptop de alto rendimiento',
         sale_price: 250.0,
         bought_price: 180.0,
+        category_id:1
       });
 
     expect(response.statusCode).toBe(201);

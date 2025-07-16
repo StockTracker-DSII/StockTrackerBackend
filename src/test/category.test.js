@@ -45,21 +45,13 @@ describe('Test de la API crear Categoría', () => {
 });
 
 describe('GET /categories', () => {
-  const categoryName = 'Prueba GET';
-
-  beforeAll(async () => {
-    // Borrar por si ya existe
-    await Category.destroy({ where: { name: categoryName } });
-
-    // Crear explícitamente
-    const res = await request(app)
-      .post('/categories')
-      .send({ name: categoryName });
-
-    expect(res.statusCode).toBe(201); // Asegura que se creó correctamente
-  });
 
   it('debería devolver un array con las categorías existentes', async () => {
+    
+    await Category.destroy({ where: { name: 'Cat' } });
+    await request(app).post('/categories').send({ name: 'Cat' });
+
+
     const response = await request(app).get('/categories');
 
     expect(response.statusCode).toBe(200);                     
