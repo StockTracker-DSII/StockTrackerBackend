@@ -10,15 +10,18 @@ afterAll(async () => {
 describe('POST /sale/newSale', () => {
   it('debería registrar una nueva venta exitosamente', async () => {
 
-    const category = await request(app).post('/categories').send({ name: 'categoria_ventas' });
-
+    const categoryResponse = await request(app).post('/categories').send({ name: 'categoria_ventas' });
+    const category = categoryResponse.body;
   // Crear productos
-  await request(app).post('/products/create').send({
+  mouse = await request(app).post('/products/create').send({
     name: 'Mouse',
     bought_price: 10,
     sale_price: 20,
     category_id: category.category_id
   });
+
+  console.log('Mouse creado:', mouse.body); // ← deberías ver product_id
+
   await request(app).post('/products/create').send({
     name: 'Teclado',
     bought_price: 15,
@@ -29,7 +32,6 @@ describe('POST /sale/newSale', () => {
   const productosResponse = await request(app).get('/products');
   const productos = productosResponse.body; // <- Aquí está el array real
 
-  console.log(productos)
 
     const payload = {
       productos: [
