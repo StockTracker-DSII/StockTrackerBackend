@@ -2,16 +2,8 @@ const request = require('supertest');
 const app = require('../app'); // Asegúrate que exporte la instancia de Express
 const { Purchase, PurchaseDetail, Product, Category, sequelize } = require('../../models');
 
-beforeAll(async () => {
-  // Sincronizar modelos si estás usando una DB en memoria (opcional)
-  // await sequelize.sync({ force: true });
 
-  // Crear categoría y productos reales
-  const category = await Category.create({ name: 'categoria_prueba' });
 
-  await Product.create({ name: 'Mouse', bought_price: 10.0, sale_price: 20.0, category_id: category.category_id });
-  await Product.create({ name: 'Teclado', bought_price: 15.0, sale_price: 30.0, category_id: category.category_id });
-});
 
 afterAll(async () => {
   // Cierra la conexión a la base de datos si es necesario
@@ -21,7 +13,16 @@ afterAll(async () => {
 describe('POST /purchase/newPurchase', () => {
 
   it('debería registrar una nueva compra exitosamente', async () => {
-    const productos = await Product.findAll();
+
+    const category = await request(app).post('/categories').send({ name: 'categoria_prueba' });
+    await request(app).post('/products/create').send({ name: 'Impresora', bought_price: 10.0, sale_price: 20.0, category_id: category.category_id });
+    await request(app).post('/products/create').send({ name: 'Televisor', bought_price: 15.0, sale_price: 30.0, category_id: category.category_id });
+
+
+    const productosResponse = await request(app).get('/products');
+    const productos = productosResponse.body; // <- Aquí está el array real
+
+
 
     const payload = {
       productos: [

@@ -33,6 +33,7 @@ exports.newPurchase = async (req, res) => {
       const newPurchaseID = nuevaCompra.purchase_id
 
       // Crear el detalle
+      // Crear el detalle
       await PurchaseDetail.create({
         purchase_id: newPurchaseID,
         product_id,
@@ -41,8 +42,10 @@ exports.newPurchase = async (req, res) => {
         value_quantity: valorTotal
       });
 
-      // Sumar al total de la compra
-      total += valorTotal;
+      // Actualizar el stock del producto
+      producto.stock += quantity;
+      await producto.save();
+
     }
 
     // Actualizar el valor total en la compra
