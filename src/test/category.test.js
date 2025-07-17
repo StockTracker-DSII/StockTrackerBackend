@@ -22,9 +22,13 @@ describe('Test de la API crear Categoría', () => {
   });
 
   it('Debe rechazar la creación de una categoría duplicada', async () => {
+    await request(app)
+      .post('/categories')
+      .send({ name: 'Platos' });
+
     const res = await request(app)
       .post('/categories')
-      .send({ name: 'Tecnología' });
+      .send({ name: 'Platos' });
 
     expect(res.statusCode).toBe(409);
     expect(res.body.error).toBe('Ya existe una categoría con ese nombre');
