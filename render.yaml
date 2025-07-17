@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: stock-tracker-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://stocktracker_db_user:H0VTZeMFABPKNXhXwjdlW9o8L0qVfnNk@dpg-d1s1mc6mcj7s73a0o1ig-a/stocktracker_db?ssl=true
+    postdeploy:
+      command: npx sequelize-cli db:migrate --env production

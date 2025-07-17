@@ -10,20 +10,20 @@ afterAll(async () => {
 describe('POST /products/create ', () => {
   it('debería crear un nuevo producto con ID autogenerado', async () => {
 
-        await request(app)
-        .post('/categories/create')
-        .send({
-          name: 'Electronica'
-        });
+    await request(app).post('/categories').send({name: 'ABDC'});
 
-    const response = await request(app)
-      .post('/products/create')
-      .send({
+    const res = await request(app).get('/categories');
+  const categoryId = res.body[0].category_id;
+
+  console.log('ID de la categoría:', categoryId);
+
+    const response = await request(app).post('/products/create').send
+    ({
         name: 'Laptop HP',
         description: 'Laptop de alto rendimiento',
         sale_price: 250.0,
         bought_price: 180.0,
-        category_id:1
+        category_id: categoryId
       });
 
     expect(response.statusCode).toBe(201);
