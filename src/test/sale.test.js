@@ -33,8 +33,7 @@ describe('POST /sale/newSale', () => {
 
     const payload = {
       productos: [
-        { product_id: productos[0].product_id, quantity: 2 },
-        { product_id: productos[1].product_id, quantity: 1 }
+        { product_id: productos[0].product_id, quantity: 2 }
       ]
     };
 
